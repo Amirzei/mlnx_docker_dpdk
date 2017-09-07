@@ -1,4 +1,4 @@
-ARG OS_VER=16.04 
+ARG OS_VER=14.04 
 ARG DPDK_VER=17.08
 FROM ubuntu:${OS_VER}
 MAINTAINER Amir Zeidner
@@ -9,6 +9,7 @@ WORKDIR /
 
 # Install prerequisite packages
 RUN apt-get update && apt-get install -y \
+libnl1 \
 libnl-route-3-200 \
 libnuma-dev \
 numactl \
