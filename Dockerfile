@@ -19,7 +19,7 @@ make \
 gcc \
 ethtool \
 net-tools \
-linux-headers-4.4.0-93-generic \
+linux-headers-$(uname -r) \
 && rm -rf /var/lib/apt/lists/* 
 
 # Download and install Mellanox drivers
