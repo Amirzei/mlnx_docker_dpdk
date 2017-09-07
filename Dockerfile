@@ -3,8 +3,6 @@ ARG DPDK_VER=17.08
 FROM ubuntu:${OS_VER}
 MAINTAINER Amir Zeidner
 
-LABEL RUN "docker run -itd --privileged -v /mnt/huge_c0/:/dev/hugepages/  -v /usr/src/dpdk-17.08:/tmp  --net=host --name NAME -e NAME=NAME -e IMAGE=IMAGE IMAGE"
-
 WORKDIR /
 
 # Install prerequisite packages
