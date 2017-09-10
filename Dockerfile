@@ -1,32 +1,28 @@
-ARG OS_VER=16.10 
+ARG OS_VER=7.2.1511 
 ARG DPDK_VER=17.08
-FROM ubuntu:${OS_VER}
+FROM centos:${OS_VER}
 MAINTAINER Amir Zeidner
-
-LABEL RUN "docker run -itd --privileged -v /mnt/huge_c0/:/dev/hugepages/  -v /usr/src/dpdk-17.08:/tmp  --net=host --name NAME -e NAME=NAME -e IMAGE=IMAGE IMAGE"
 
 WORKDIR /
 
 # Install prerequisite packages
-RUN apt-get update && apt-get install -y \
-libnl-route-3-200 \
-libnuma-dev \
+RUN yum update -y &&  yum install -y \
+libnl \
+numactl-devel \
 numactl \
-libnuma1 \
 unzip \
 wget \
 make \
 gcc \
 ethtool \
 net-tools \
-linux-headers-$(uname -r) \
-&& rm -rf /var/lib/apt/lists/* 
+kernel-headers.x86_64 
 
 # Download and install Mellanox drivers
 ARG OS_VER
-RUN wget http://www.mellanox.com/downloads/ofed/MLNX_EN-4.1-1.0.2.0/mlnx-en-4.1-1.0.2.0-ubuntu${OS_VER}-x86_64.tgz && tar -xvzf /mlnx-en-4.1-1.0.2.0-ubuntu${OS_VER}-x86_64.tgz
-RUN dpkg -i $( ls /mlnx-en-4.1-1.0.2.0-ubuntu${OS_VER}-x86_64/DEBS/libibverbs* | grep -v dbg )
-RUN dpkg -i $( ls /mlnx-en-4.1-1.0.2.0-ubuntu${OS_VER}-x86_64/DEBS/libmlx* | grep -v dbg )
+RUN wget http://www.mellanox.com/downloads/ofed/MLNX_EN-4.1-1.0.2.0/mlnx-en-4.1-1.0.2.0-rhel${OS_VER:0:3}-x86_64.tgz && tar -xvzf /mlnx-en-4.1-1.0.2.0-rhel${OS_VER:0:3}-x86_64.tgz
+RUN rpm -ivh $( ls /mlnx-en-4.1-1.0.2.0-rhel${OS_VER:0:3}-x86_64/RPMS/libibverbs* | grep -v dbg )
+RUN rpm -ivh $( ls /mlnx-en-4.1-1.0.2.0-rhel${OS_VER:0:3}-x86_64/RPMS/libmlx* | grep -v dbg )
 
 # Download and compile DPDK
 ARG DPDK_VER
@@ -36,4 +32,4 @@ RUN cd $DPDK_DIR && sed -i 's/\(CONFIG_RTE_LIBRTE_MLX5_PMD=\)n/\1y/g' $DPDK_DIR/
 RUN cd $DPDK_DIR && make install T=$DPDK_TARGET DESTDIR=install
 
 # Remove unnecessary packages and files
-RUN rm -rf /tmp/* && rm -rf /mlnx-en-4.1-1.0.2.0-ubuntu${OS_VER}-x86_64/ && rm /mlnx-en-4.1-1.0.2.0-ubuntu${OS_VER}-x86_64.tgz && rm /usr/src/dpdk-${DPDK_VER}.zip
+RUN rm -rf /tmp/* && rm -rf /mlnx-en-4.1-1.0.2.0-rhel${OS_VER:0:3}-x86_64/ && rm /mlnx-en-4.1-1.0.2.0-rhel${OS_VER:0:3}-x86_64.tgz && rm /usr/src/dpdk-${DPDK_VER}.zip
