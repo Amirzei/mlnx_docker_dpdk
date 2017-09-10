@@ -16,7 +16,7 @@ make \
 gcc \
 ethtool \
 net-tools \
-kernel-headers.x86_64 
+kernel-devel
 
 # Download and install Mellanox drivers
 ARG OS_VER
